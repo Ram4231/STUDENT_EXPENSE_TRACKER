@@ -1,0 +1,502 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Expense Tracker</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fc;
+            color: #252b42;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: #252b5c;
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd0f5;
+            text-decoration: none;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            background: #6558f5;
+            color: white;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 30px;
+            min-width: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #777;
+            margin-top: 8px;
+        }
+
+        .date {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            color: #6558f5;
+            font-weight: bold;
+        }
+
+        /* Summary Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            padding: 25px;
+            border-radius: 18px;
+            color: white;
+            box-shadow: 0 5px 15px #00000010;
+        }
+
+        .balance {
+            background: linear-gradient(135deg, #6558f5, #9387ff);
+        }
+
+        .income {
+            background: linear-gradient(135deg, #10b981, #48d6a0);
+        }
+
+        .expense {
+            background: linear-gradient(135deg, #ff6584, #ff9472);
+        }
+
+        .card h3 {
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            font-size: 28px;
+        }
+
+        /* Content Panels */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px #00000008;
+        }
+
+        .panel h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e3ef;
+            border-radius: 9px;
+            outline: none;
+            background: #fafbff;
+        }
+
+        input:focus, select:focus {
+            border-color: #6558f5;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 9px;
+            padding: 13px 20px;
+            font-weight: bold;
+            background: #6558f5;
+            color: white;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #5043d6;
+        }
+
+        /* Transactions */
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction small {
+            display: block;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .positive {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .negative {
+            color: #ff6584;
+            font-weight: bold;
+        }
+
+        .category {
+            display: flex;
+            justify-content: space-between;
+            margin: 18px 0 8px;
+            font-size: 14px;
+        }
+
+        .progress {
+            height: 8px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .food { background: #ff9f43; }
+        .transport { background: #6558f5; }
+        .education { background: #10b981; }
+        .other { background: #ff6584; }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 190px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dashboard {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .sidebar a {
+                display: inline-block;
+                padding: 10px;
+                margin: 3px;
+            }
+
+            .main {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">🎓 StudentPay</div>
+        <a href="#" class="active">📊 Dashboard</a>
+        <a href="#add">➕ Add Transaction</a>
+        <a href="#transactions">💳 Transactions</a>
+        <a href="#categories">📈 Categories</a>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main">
+
+        <div class="header">
+            <div>
+                <h1>Expense Dashboard</h1>
+                <p>Manage your student money smartly!</p>
+            </div>
+            <div class="date" id="today"></div>
+        </div>
+
+        <!-- Summary Cards -->
+        <section class="cards">
+            <div class="card balance">
+                <h3>💰 Total Balance</h3>
+                <h2 id="balance">₹8,500</h2>
+            </div>
+
+            <div class="card income">
+                <h3>📥 Total Income</h3>
+                <h2 id="income">₹12,000</h2>
+            </div>
+
+            <div class="card expense">
+                <h3>📤 Total Expenses</h3>
+                <h2 id="expense">₹3,500</h2>
+            </div>
+        </section>
+
+        <div class="content-grid">
+
+            <!-- Add Transaction Form -->
+            <section class="panel" id="add">
+                <h2>➕ Add Transaction</h2>
+
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label for="title">Transaction Name</label>
+                        <input type="text" id="title"
+                               placeholder="e.g. College lunch" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount (₹)</label>
+                        <input type="number" id="amount"
+                               min="1" placeholder="Enter amount" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Transaction Type</label>
+                        <select id="type">
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category">
+                            <option>Food</option>
+                            <option>Transport</option>
+                            <option>Education</option>
+                            <option>Shopping</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">Add Transaction</button>
+                </form>
+            </section>
+
+            <!-- Category Breakdown -->
+            <section class="panel" id="categories">
+                <h2>📊 Expense Categories</h2>
+
+                <div class="category">
+                    <span>🍔 Food</span><span>₹1,500</span>
+                </div>
+                <div class="progress">
+                    <div class="bar food" style="width: 43%"></div>
+                </div>
+
+                <div class="category">
+                    <span>🚌 Transport</span><span>₹800</span>
+                </div>
+                <div class="progress">
+                    <div class="bar transport" style="width: 23%"></div>
+                </div>
+
+                <div class="category">
+                    <span>📚 Education</span><span>₹700</span>
+                </div>
+                <div class="progress">
+                    <div class="bar education" style="width: 20%"></div>
+                </div>
+
+                <div class="category">
+                    <span>🛍️ Other</span><span>₹500</span>
+                </div>
+                <div class="progress">
+                    <div class="bar other" style="width: 14%"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Recent Transactions -->
+        <section class="panel" id="transactions">
+            <h2>💳 Recent Transactions</h2>
+            <div id="transactionList">
+                <div class="transaction">
+                    <div>🍔 Lunch <small>Food</small></div>
+                    <span class="negative">-₹250</span>
+                </div>
+
+                <div class="transaction">
+                    <div>💵 Pocket Money <small>Income</small></div>
+                    <span class="positive">+₹5,000</span>
+                </div>
+
+                <div class="transaction">
+                    <div>📚 Books <small>Education</small></div>
+                    <span class="negative">-₹700</span>
+                </div>
+
+                <div class="transaction">
+                    <div>🚌 Bus Pass <small>Transport</small></div>
+                    <span class="negative">-₹800</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    let income = 12000;
+    let expense = 3500;
+
+    // Display today's date
+    document.getElementById("today").textContent =
+        new Date().toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        });
+
+    function updateSummary() {
+        document.getElementById("income").textContent =
+            "₹" + income.toLocaleString("en-IN");
+
+        document.getElementById("expense").textContent =
+            "₹" + expense.toLocaleString("en-IN");
+
+        document.getElementById("balance").textContent =
+            "₹" + (income - expense).toLocaleString("en-IN");
+    }
+
+    // Add a new transaction
+    document.getElementById("expenseForm")
+        .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const title = document.getElementById("title").value;
+        const amount = Number(document.getElementById("amount").value);
+        const type = document.getElementById("type").value;
+        const category = document.getElementById("category").value;
+
+        if (amount <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        if (type === "income") {
+            income += amount;
+        } else {
+            expense += amount;
+        }
+
+        const transaction = document.createElement("div");
+        transaction.className = "transaction";
+
+        const sign = type === "income" ? "+" : "-";
+        const amountClass = type === "income" ? "positive" : "negative";
+
+        transaction.innerHTML = `
+            <div>
+                ${title}
+                <small>${category}</small>
+            </div>
+            <span class="${amountClass}">
+                ${sign}₹${amount.toLocaleString("en-IN")}
+            </span>
+        `;
+
+        document.getElementById("transactionList")
+            .prepend(transaction);
+
+        updateSummary();
+        this.reset();
+    });
+</script>
+
+</body>
+</html>
+```
